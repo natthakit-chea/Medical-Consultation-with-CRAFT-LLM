@@ -1,0 +1,64 @@
+
+```
+nohup bash -c '
+export GRADIO_SERVER_NAME=100.127.9.127
+export GRADIO_SERVER_PORT=6008
+export WANDB_PROJECT=llama-teams
+export WANDB_API_KEY=49575fcf2b2af39cdb215b505c8d70a0f4242cf0
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+wandb login
+wandb online
+llamafactory-cli train \
+    --model_name_or_path /home/natthakit/raft/Meta-Llama-3.1-8B-Instruct \
+    --output_dir saves/Llama-3.1-8B/lora/craft_finetunev2 \
+    --finetuning_type lora \
+    --template craft_prompt_template \
+    --stage sft \
+    --do_train True \
+    --do_eval True \
+    --flash_attn auto \
+    --dataset_dir data \
+    --dataset craft_train_set \
+    --eval_dataset craft_dev_set \
+    --evaluation_strategy steps \
+    --eval_steps 250 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 8 \
+    --gradient_accumulation_steps 4 \
+    --eval_accumulation_steps 8 \
+    --learning_rate 1e-05 \
+    --lr_scheduler_type linear \
+    --warmup_steps 100 \
+    --weight_decay 0.001 \
+    --adam_beta1 0.9 \
+    --adam_beta2 0.98 \
+    --adam_epsilon 1e-08 \
+    --max_grad_norm 1.0 \
+    --num_train_epochs 5 \
+    --logging_steps 50 \
+    --save_strategy steps \
+    --save_steps 500 \
+    --save_total_limit 3 \
+    --load_best_model_at_end True \
+    --metric_for_best_model eval_loss \
+    --greater_is_better False \
+    --seed 42 \
+    --bf16 True \
+    --gradient_checkpointing True \
+    --logging_dir logs \
+    --log_level info \
+    --train_on_prompt False \
+    --remove_unused_columns True \
+    --fp16_backend auto \
+    --group_by_length True \
+    --length_column_name length \
+    --overwrite_output_dir True \
+    --report_to wandb \
+    --max_new_tokens 512 \
+    --rope_scaling linear \
+    --lora_dropout 0.2 \
+    --lora_rank 16 \
+    --max_steps -1 \
+    --cutoff_len 2048
+' > ../train_craftv2.log 2>&1 &
+```
